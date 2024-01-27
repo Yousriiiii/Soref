@@ -1,11 +1,14 @@
-import React from 'react';
-import { View, StyleSheet, Image , StatusBar, Text} from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, StatusBar, Text } from 'react-native';
 import { FloatingAction } from 'react-native-floating-action';
-import { useState } from 'react';
+import { useFonts } from 'expo-font';
 
 const HomeScreen = () => {
+  const [fontsLoaded] = useFonts({
+    Minecraft: require('./assets/fonts/minecraft_font.ttf'),
+  });
 
-  const [titleText, setTitleText] = useState("Vos sujets");
+  const [titleText, setTitleText] = useState('Vos sujets');
 
   const actions = [
     {
@@ -15,13 +18,15 @@ const HomeScreen = () => {
     },
   ];
 
+  // Je n'affiche rien si la polica n'a pas été chargé
+  if (!fontsLoaded) {
+    return null; 
+  }
+
   return (
-    <View style={styles.container}>
-      
-      <View>
-        <Text style={styles.title}>
-          {titleText}
-        </Text>
+    <View style={styles.MainContainer}>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>{titleText}</Text>
       </View>
 
       {/* Barre de statut avec fond noir */}
@@ -32,13 +37,12 @@ const HomeScreen = () => {
         actions={actions}
         onPressItem={(name) => {
           if (name === 'new_subject') {
-            // Gérez l'événement du bouton ici
             console.log('Bouton Nouveau appuyé');
           }
         }}
         position="right"
         animated={false}
-        color='#C08926'
+        color="#C08926"
         overrideWithAction
       />
     </View>
@@ -46,16 +50,22 @@ const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  MainContainer: {
     flex: 1,
-    //textAlign: 'center',
+    alignItems: 'center',
+  },
+  titleContainer: {
+    flex: 0.1,
+    backgroundColor: 'gray',
+    width: '100%',
+    padding: 50,
     justifyContent: 'center',
-    alignItems: 'center', // Centrer horizontalement
   },
   title: {
     fontWeight: 'bold',
-    marginVertical: 4, 
-  }
+    fontSize: 30,
+    fontFamily: 'Minecraft',
+  },
 });
 
 export default HomeScreen;
