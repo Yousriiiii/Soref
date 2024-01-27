@@ -29,7 +29,7 @@ const HomeScreen = () => {
         <Text style={styles.title}>{titleText}</Text>
       </View>
 
-      {/* Barre de statut avec fond noir */}
+      {/* Barre de statut en fond noir */}
       <StatusBar barStyle="dark-content" />
 
       {/* Bouton flottant en bas à droite */}
@@ -56,15 +56,19 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     flex: 0.1,
-    backgroundColor: 'gray',
+    //backgroundColor: 'gray',
     width: '100%',
     padding: 50,
-    justifyContent: 'center',
+    alignItems: 'center', // centre le titre au centre horizontale
+    borderBottomWidth: 1, // épaisseur de ligne
+    borderBottomColor: 'black', // couleur de la ligne qui se trouve sous le titre
+    paddingBottom: 5, //Permet de mettre en place la ligne en dessous du texte
   },
   title: {
-    fontWeight: 'bold',
     fontSize: 30,
     fontFamily: 'Minecraft',
+    letterSpacing: 1, // espace entre les lettre
+    marginTop: 20,
   },
 });
 
