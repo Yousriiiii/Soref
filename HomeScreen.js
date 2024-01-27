@@ -1,14 +1,48 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, StatusBar, Text } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, StatusBar, Text} from 'react-native';
 import { FloatingAction } from 'react-native-floating-action';
 import { useFonts } from 'expo-font';
+import * as FileSystem from 'expo-file-system';
 
 const HomeScreen = () => {
+
+  dataToShow = {};
+
+  useEffect(() => {
+    const writeToFile = async () => {
+      const filePath = `${FileSystem.documentDirectory}data.json`; // Fichier qui va contenir les données de toutes les références
+
+      jsonData = {
+        "Santé": {"sourate": 5, "verset": 10},
+        "Vie":{"sourate": 10, "verset": 16},
+      }
+
+      try {
+        // Write to file
+        //await FileSystem.writeAsStringAsync(filePath, JSON.stringify(jsonData));
+
+        // Read from file
+        const fileContent = await FileSystem.readAsStringAsync(filePath);
+        const parsedData = JSON.parse(fileContent);
+
+        //console.log('File content:', parsedData);
+        dataToShow = parsedData;
+        //console.log(`${FileSystem.documentDirectory}data.json`);
+      } catch (error) {
+        console.error('Error accessing file:', error);
+      }
+    };
+
+    writeToFile();
+  }, []);
+
+
+  // Set fonts style
   const [fontsLoaded] = useFonts({
     Minecraft: require('./assets/fonts/minecraft_font.ttf'),
   });
 
-  const [titleText, setTitleText] = useState('Vos sujets');
+  const [titleText, setTitleText] = useState('Mes sujets');
 
   const actions = [
     {

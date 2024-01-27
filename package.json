@@ -12,12 +12,15 @@
     "@expo/webpack-config": "~19.0.1",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "expo": "^50.0.3",
+    "expo-file-system": "^16.0.5",
     "expo-font": "^11.10.2",
     "expo-status-bar": "~1.11.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.73.2",
     "react-native-floating-action": "^1.22.0",
+    "react-native-fs": "^2.20.0",
+    "react-native-permissions": "^4.0.4",
     "react-native-web": "~0.19.6"
   },
   "devDependencies": {
