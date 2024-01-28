@@ -20,6 +20,7 @@
     "react-native": "0.73.2",
     "react-native-floating-action": "^1.22.0",
     "react-native-fs": "^2.20.0",
+    "react-native-modal": "^13.0.1",
     "react-native-permissions": "^4.0.4",
     "react-native-web": "~0.19.6"
   },

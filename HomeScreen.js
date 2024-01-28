@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, StatusBar, Text, FlatList, SafeAreaView, Dimensions} from 'react-native';
+import { View, StyleSheet, StatusBar, Text, FlatList, SafeAreaView, Dimensions, Modal, Pressable, TextInput, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { FloatingAction } from 'react-native-floating-action';
 import { useFonts } from 'expo-font';
 import * as FileSystem from 'expo-file-system';
@@ -54,11 +54,18 @@ const HomeScreen = () => {
     },
   ];
 
+
+  // Fonction qui retourne les composants des items de la flatlist
   const Item = ({title}) => (
     <View style={styles.item}>
       <Text style={styles.textItem}>{title}</Text>
     </View>
   );
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss(); // Je quitte le clavier
+  }
+
 
   // Set fonts style
   const [fontsLoaded] = useFonts({
@@ -66,6 +73,11 @@ const HomeScreen = () => {
   });
 
   const [titleText, setTitleText] = useState('Mes sujets');
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const [newPotentialSubject, onChangeText] = React.useState();
+
 
   const actions = [
     {
@@ -102,7 +114,7 @@ const HomeScreen = () => {
         actions={actions}
         onPressItem={(name) => {
           if (name === 'new_subject') {
-            console.log('Bouton Nouveau appuyé');
+            setModalVisible(!modalVisible);
           }
         }}
         position="right"
@@ -110,6 +122,35 @@ const HomeScreen = () => {
         color="#a8c66c"
         overrideWithAction
       />
+
+
+      <Modal
+        animationType="slide"
+        visible={modalVisible}
+        >
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
+        <View style={styles.continerInModal}>
+          <View style={styles.containerTextInModal1}>
+            <Text style={styles.textItem}>Nouveau sujet :</Text>
+            <SafeAreaView>
+              <TextInput
+                style={styles.input}
+                onChangeText={onChangeText}
+                placeholder="Saisissez le nom du sujet"
+              />
+            </SafeAreaView>
+            <Pressable
+              onPress={() => setModalVisible(!modalVisible)}>
+              <Text style={styles.buttonCloseModal} >Ajouter ce sujet</Text>
+            </Pressable>
+            
+          </View>
+        </View>
+        </TouchableWithoutFeedback>
+
+      </Modal>
+
+
     </View>
   );
 };
@@ -153,6 +194,29 @@ const styles = StyleSheet.create({
     borderWidth:  1, // épaisseur des bordures
     borderRadius:  20, // rayon des bordures
     alignItems: 'center',
+  },
+  continerInModal: {
+    flex: 1,    
+    alignItems: 'center',
+    alignSelf:'stretch',
+  },
+  containerTextInModal1: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  input: {
+    width: screenWidth-60,
+    borderWidth: 1,
+    padding: 20,
+    marginTop: 40,
+  },
+  buttonCloseModal: {
+    top: 50,
+    fontFamily: 'Minecraft',
+    fontSize: 20,
+    textDecorationStyle: 'dashed',
   },
 });
 
