@@ -7,14 +7,35 @@ import HomeScreen from './HomeScreen';
 import ResearchScreen from './ResearchScreen';
 
 
+import HomeIcon from './assets/HomeIcon.png';
+import ResearchIcon from './assets/ResearchIcon.png';
+
 const Tab = createBottomTabNavigator();
 
 const App = () => {
   return (
     <NavigationContainer> 
       <Tab.Navigator>
-        <Tab.Screen name="Home" component={HomeScreen} options={{title:"Sujets", headerShown: false , }}/>
-        <Tab.Screen name="Research" component={ResearchScreen} options={{title:"Recherche", headerShown: false , }} />
+        <Tab.Screen name="Home" component={HomeScreen} options={{title:"Sujets", headerShown: false , tabBarIcon: ({ focused }) => (
+              <Image
+                source={HomeIcon}
+                style={{
+                  width: 60,
+                  height: 60,
+                  tintColor: focused ? 'blue' : 'gray', // You can customize the tint color
+                }}
+              />
+            ), }}/>
+        <Tab.Screen name="Research" component={ResearchScreen} options={{title:"Recherche", headerShown: false , tabBarIcon: ({ focused }) => (
+              <Image
+                source={ResearchIcon}
+                style={{
+                  width: 35,
+                  height: 35,
+                  tintColor: focused ? 'blue' : 'gray', // You can customize the tint color
+                }}
+              />
+            ), }} />
       </Tab.Navigator>
     </NavigationContainer>
   );

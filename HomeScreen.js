@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, StatusBar, Text} from 'react-native';
+import { View, StyleSheet, StatusBar, Text, FlatList, SafeAreaView, Dimensions} from 'react-native';
 import { FloatingAction } from 'react-native-floating-action';
 import { useFonts } from 'expo-font';
 import * as FileSystem from 'expo-file-system';
 
+const screenWidth = Dimensions.get('window').width; // Largeur de l'écran
+
 const HomeScreen = () => {
 
   dataToShow = {};
-
+  /*
   useEffect(() => {
     const writeToFile = async () => {
       const filePath = `${FileSystem.documentDirectory}data.json`; // Fichier qui va contenir les données de toutes les références
@@ -35,7 +37,28 @@ const HomeScreen = () => {
 
     writeToFile();
   }, []);
+  */
 
+  const DATA = [
+    {
+      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+      title: 'First Item',
+    },
+    {
+      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
+      title: 'Second Item',
+    },
+    {
+      id: '58694a0f-3da1-471f-bd96-145571e29d72',
+      title: 'Third Item',
+    },
+  ];
+
+  const Item = ({title}) => (
+    <View style={styles.item}>
+      <Text style={styles.textItem}>{title}</Text>
+    </View>
+  );
 
   // Set fonts style
   const [fontsLoaded] = useFonts({
@@ -66,6 +89,14 @@ const HomeScreen = () => {
       {/* Barre de statut en fond noir */}
       <StatusBar barStyle="dark-content" />
 
+      <SafeAreaView style={styles.ListContainer}>
+        <FlatList
+          data={DATA}
+          renderItem={({item}) => <Item title={item.title} />}
+          keyExtractor={item => item.id}
+        />
+      </SafeAreaView>
+
       {/* Bouton flottant en bas à droite */}
       <FloatingAction
         actions={actions}
@@ -76,7 +107,7 @@ const HomeScreen = () => {
         }}
         position="right"
         animated={false}
-        color="#C08926"
+        color="#a8c66c"
         overrideWithAction
       />
     </View>
@@ -103,6 +134,25 @@ const styles = StyleSheet.create({
     fontFamily: 'Minecraft',
     letterSpacing: 1, // espace entre les lettre
     marginTop: 20,
+  },
+  ListContainer: {
+    flex: 1,
+    //backgroundColor: 'gray',
+    alignItems: 'center',
+    alignSelf:'stretch',
+  },
+  textItem: {
+    fontSize: 25,
+    fontFamily: 'Minecraft',
+  },
+  item: {
+    backgroundColor: '#e1dd72',
+    padding: 10, // Créer plus d'espace pour l'item
+    width: screenWidth-50,
+    marginVertical: 8, // espace entre les items
+    borderWidth:  1, // épaisseur des bordures
+    borderRadius:  20, // rayon des bordures
+    alignItems: 'center',
   },
 });
 
