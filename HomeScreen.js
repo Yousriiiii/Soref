@@ -9,14 +9,10 @@ const screenWidth = Dimensions.get('window').width; // Largeur de l'écran
 
 let DATA = [
   {
-    id: 'default',
-    title: 'Rien à montrer',
+    id: 'Aucun',
+    title: 'Aucun',
   }, 
 ];
-
-let test = {
-  "ldld" : [{"sourate": 5, "commentaire": "lol"}]
-}
 
 
 const HomeScreen = () => {
@@ -28,14 +24,25 @@ const HomeScreen = () => {
   const [newPotentialSubject, onChangeText] = useState();
 
   const [data_in_flatlist, setDataInFlatlist] = useState(DATA);
-  
-  useEffect(() => {
-    const readFile = async () => { 
-      let fileM = new FM();
-      setDataInFlatlist(await fileM.get_all_ref());
-    };
 
-    readFile();
+  useEffect(() => {
+    const change_data = async () =>{
+      const fileM = new FM();
+      const all_ref =  await fileM.get_all_ref();
+      setDataInFlatlist(all_ref);
+    }
+
+    const check_file = async () => {
+      if(await FM.check_if_file_exist()){
+        // true il existe déjà - false il n'existe pas (il vient d'etre créer)
+        change_data();
+      }else{
+        console.log("je laisse la variable par défaut");
+        setDataInFlatlist(DATA);
+      }
+    }
+
+    check_file();
   }, []);
   
 
@@ -51,14 +58,13 @@ const HomeScreen = () => {
   };
 
   const add_new_ref = async () => {
-    console.log("yoyoyoyoy", newPotentialSubject);
     let fileM = new FM();
     
-    fileM.add_new_ref(newPotentialSubject);
+    await fileM.add_new_ref(newPotentialSubject);
 
     let new_data = await fileM.get_all_ref();
 
-    console.log(new_data);
+    console.log("tous les réf sont ", new_data);
 
     setDataInFlatlist(new_data);
   };
@@ -80,8 +86,6 @@ const HomeScreen = () => {
   if (!fontsLoaded) {
     return null;
   }
-
-  // console.log(data_in_flatlist);
 
   return (
     <View style={styles.MainContainer}>
@@ -127,8 +131,14 @@ const HomeScreen = () => {
               style={[styles.topImage, { transform: [{ scaleY: -1 }] }]}
               resizeMode="cover"
             />
+            <Image
+              source={require('./assets/bottomIMG.png')}
+              style={styles.bottomImage}
+              resizeMode="cover"
+            />
+
             <View style={styles.containerTextInModal1}>
-              <Text style={styles.textItem}>Nouveau sujet :</Text>
+              <Text style={styles.titleModal}>Nouveau sujet :</Text>
               <SafeAreaView>
                 <TextInput
                   style={styles.input}
@@ -161,12 +171,6 @@ const HomeScreen = () => {
               </SafeAreaView>
 
             </View>
-
-            <Image
-              source={require('./assets/bottomIMG.png')}
-              style={styles.bottomImage}
-              resizeMode="cover"
-            />
 
           </View>
         </TouchableWithoutFeedback>
@@ -238,6 +242,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
     fontFamily: 'Minecraft',
     textAlign: 'center',
+    backgroundColor: '#ffffff'
   },
   buttonCloseModal: {
     top: 30,
@@ -262,7 +267,11 @@ const styles = StyleSheet.create({
     padding: 3,
     marginHorizontal: 5
   },
-
+  titleModal: {
+    fontSize: 25,
+    fontFamily: 'Minecraft',
+    backgroundColor: '#d19d00'
+  },
 
   bottomImage: { // Je designe une position absolue pour les images
     position: 'absolute',

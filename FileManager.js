@@ -1,34 +1,51 @@
 import * as FileSystem from 'expo-file-system';
 
 class FM {
-  JSONpath = FileSystem.documentDirectory + 'data.json'; // Chemin vers le fichier JSON
+  static JSONpath = FileSystem.documentDirectory + 'data.json'; // Chemin vers le fichier JSON
+
+  static async check_if_file_exist(){
+
+    //await FileSystem.deleteAsync(FM.JSONpath); // Ca détruit le fichier pour qu je recommence mes test
+
+    // Créer un fichier s'il n'existe pas
+    const dirInfo = await FileSystem.getInfoAsync(FM.JSONpath);
+
+    if(!dirInfo.exists){
+      // Il n'existe pas du coups je le créer
+      await FileSystem.writeAsStringAsync(FM.JSONpath, JSON.stringify({"Aucun": []}));
+      return false;
+    }else{
+      return true;
+    }
+  }
 
   async add_new_ref(new_subject) {
     // Première étape, je lis ce qu'il y a dans le json et puis je vérifie et puis la j'écris
     const currentData = await this.read_file();
-    let updatedData;
 
-    if("default" in currentData){
+    if(currentData.hasOwnProperty("Aucun")){
+      console.log("je recirs tous");
         // Clear and make new data
-        this.rewrite_data(new_subject);
-        updatedData = currentData;
-        console.log("ahahahahaah");
-
+        const new_item = {};
+        new_item[new_subject] = [];
+        this.rewrite_data(new_item);
     }else{
-        console.log("j'ajoute ici", updatedData);
-        // Add it to file
-        updatedData = [...currentData, new_subject];
-        this.rewrite_data(updatedData);  
+        // Add it to file 
+        console.log("je dois ajouter une ref");
+        if(!currentData.hasOwnProperty(new_subject)){
+          // Si la clé est nouvelle ajoute la
+          currentData[new_subject] = [];
+          console.log("la nouvelle valeur est ajouté");
+        }else{
+          console.log("il y a déjà une clé");
+        }
+        this.rewrite_data(currentData);  
     }
-
-    // Et en même temps il me renvoie les données courantes
-    return updatedData
-
   }
 
   async read_file() {
     try {
-      const fileContent = await FileSystem.readAsStringAsync(this.JSONpath);
+      const fileContent = await FileSystem.readAsStringAsync(FM.JSONpath);
       const parsedData = JSON.parse(fileContent);
 
       return parsedData;
@@ -39,24 +56,21 @@ class FM {
 
   async rewrite_data(data){
 
-    new_data = {}
-
-    new_data[data] = [];
-
     try {
-        await FileSystem.writeAsStringAsync(this.JSONpath, JSON.stringify(new_data));
+      console.log("ce que je dois écrire", data);
+        await FileSystem.writeAsStringAsync(FM.JSONpath, JSON.stringify(data));
       } catch (error) {
         console.error('Erreur lors de la réécriture des données :', error);
       }
     }
 
-
     async get_all_ref() {
         let data_to_return = [];
     
         try {
-          const fileContent = await FileSystem.readAsStringAsync(this.JSONpath);
+          const fileContent = await FileSystem.readAsStringAsync(FM.JSONpath);
           const parsedData = JSON.parse(fileContent);
+          console.log("ce que j'ai lu est",parsedData);
     
           for (const [key, value] of Object.entries(parsedData)) {
             data_to_return.push({ id: key, title: key });
