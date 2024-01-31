@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, StatusBar, Text, FlatList, SafeAreaView, Dimensions, Modal, Pressable, TextInput, TouchableWithoutFeedback, Keyboard, Image } from 'react-native';
+import { View, StyleSheet, StatusBar, Text, FlatList, SafeAreaView, Dimensions, Modal, Pressable, TextInput, TouchableWithoutFeedback, Keyboard, Image, TouchableOpacity } from 'react-native';
 import { FloatingAction } from 'react-native-floating-action';
 import { useFonts } from 'expo-font';
 import * as FileSystem from 'expo-file-system';
 import FM from "./FileManager";
+import { SwipeListView } from 'react-native-swipe-list-view';
 
 const screenWidth = Dimensions.get('window').width; // Largeur de l'écran
+const screenHeight = Dimensions.get('window').height;
 
 let DATA = [
   {
     id: 'Aucun',
     title: 'Aucun',
-  }, 
+  },
 ];
 
 
@@ -26,17 +28,17 @@ const HomeScreen = () => {
   const [data_in_flatlist, setDataInFlatlist] = useState(DATA);
 
   useEffect(() => {
-    const change_data = async () =>{
+    const change_data = async () => {
       const fileM = new FM();
-      const all_ref =  await fileM.get_all_ref();
+      const all_ref = await fileM.get_all_ref();
       setDataInFlatlist(all_ref);
     }
 
     const check_file = async () => {
-      if(await FM.check_if_file_exist()){
+      if (await FM.check_if_file_exist()) {
         // true il existe déjà - false il n'existe pas (il vient d'etre créer)
         change_data();
-      }else{
+      } else {
         console.log("je laisse la variable par défaut");
         setDataInFlatlist(DATA);
       }
@@ -44,15 +46,15 @@ const HomeScreen = () => {
 
     check_file();
   }, []);
-  
+
 
   // Fonction qui retourne les composants des items de la flatlist
   const Item = ({ title }) => (
     <View style={styles.item}>
       <Pressable onPress={() => {
         console.log("ok");
-}} style={styles.show_all_ref}>
-      <Text style={styles.textItem}>{title}</Text>
+      }} style={styles.show_all_ref}>
+        <Text style={styles.textItem}>{title}</Text>
       </Pressable>
     </View>
   );
@@ -63,7 +65,7 @@ const HomeScreen = () => {
 
   const add_new_ref = async () => {
     let fileM = new FM();
-    
+
     await fileM.add_new_ref(newPotentialSubject);
 
     let new_data = await fileM.get_all_ref();
@@ -91,6 +93,41 @@ const HomeScreen = () => {
     return null;
   }
 
+  // Test
+
+  // const onRowDidOpen = (rowKey) => {
+  //   console.log('une ligne est ouverte');
+  // };
+
+
+  const renderHiddenItem = (data, rowMap) => (
+    <View style={styles.mainHiddenView}>
+      <View style={styles.hiddenLeftView}  >
+        <Pressable
+          onPress={()=>{console.log("je dois renommer",data.item.id);}}
+        >
+          <Image
+              source={require('./assets/rename.png')}
+              style={styles.hiddenLeftImage}
+              resizeMode="cover"
+            />
+        </Pressable>
+      </View>
+      <View style={styles.hiddenRightView}>
+        <Pressable
+        onPress={()=>{console.log("je dois supprimer",data.item.id);}}>
+        <Image
+            source={require('./assets/poubelle.png')}
+            style={styles.hiddenRightImage}
+            resizeMode="cover"
+          />
+                  </Pressable>
+
+      </View>
+    </View>
+  );
+
+
   return (
     <View style={styles.MainContainer}>
       <View style={styles.titleContainer}>
@@ -101,10 +138,21 @@ const HomeScreen = () => {
       <StatusBar barStyle="dark-content" />
 
       <SafeAreaView style={styles.ListContainer}>
-        <FlatList
+        {/* <FlatList
           data={data_in_flatlist}
           renderItem={({ item }) => <Item title={item.title} />}
           keyExtractor={item => item.id}
+        /> */}
+        <SwipeListView
+          data={data_in_flatlist}
+          renderItem={({ item }) => <Item title={item.title} />}
+          renderHiddenItem={renderHiddenItem}
+          leftOpenValue={70}
+          rightOpenValue={-70}
+          previewRowKey={'0'}
+          previewOpenValue={-40}
+          previewOpenDelay={3000}
+          // onRowDidOpen={onRowDidOpen}
         />
       </SafeAreaView>
 
@@ -148,29 +196,29 @@ const HomeScreen = () => {
                   style={styles.input}
                   onChangeText={onChangeText}
                   placeholder="Saisissez le nom du sujet"
-                  placeholderTextColor="#94743d" 
+                  placeholderTextColor="#94743d"
                 />
               </SafeAreaView>
 
-              <SafeAreaView style={{flexDirection: "row"}}>
+              <SafeAreaView style={{ flexDirection: "row" }}>
 
-              <Pressable
-                onPress={() => {
-                  // J'appel la fonction qui permet de créer une nouvelle réf
-                  if(newPotentialSubject != ""){
-                    add_new_ref();
-                  }
-                  setModalVisible(!modalVisible); // Je fait disparaitre le modal
-                }}>
-                <Text style={styles.buttonCloseModal} >Ajouter ce sujet</Text>
-              </Pressable>
+                <Pressable
+                  onPress={() => {
+                    // J'appel la fonction qui permet de créer une nouvelle réf
+                    if (newPotentialSubject != "") {
+                      add_new_ref();
+                    }
+                    setModalVisible(!modalVisible); // Je fait disparaitre le modal
+                  }}>
+                  <Text style={styles.buttonCloseModal} >Ajouter ce sujet</Text>
+                </Pressable>
 
-              <Pressable
-                onPress={() => {
-                  setModalVisible(!modalVisible); // Je fait juste disparaitre le modal
-                }}>
-                <Text style={styles.buttonCloseModal2} >Annuler</Text>
-              </Pressable>
+                <Pressable
+                  onPress={() => {
+                    setModalVisible(!modalVisible); // Je fait juste disparaitre le modal
+                  }}>
+                  <Text style={styles.buttonCloseModal2} >Annuler</Text>
+                </Pressable>
 
               </SafeAreaView>
 
@@ -296,9 +344,41 @@ const styles = StyleSheet.create({
   show_all_ref: {
     alignSelf: 'stretch',
     alignItems: 'center',
-    
-  }
-
+  },
+  // Hidden area
+  mainHiddenView: {
+    padding: 10,
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignSelf: 'stretch',
+    alignItems: 'center',
+  },
+  hiddenLeftView: {
+    backgroundColor: '#0a46a6',
+    padding:10,
+    borderWidth: 1, // épaisseur des bordures
+    borderBottomLeftRadius: 20, // rayon des bordures
+    borderTopLeftRadius: 20,
+    alignItems: 'center',
+  },
+  hiddenRightView: {
+    backgroundColor: '#750c2a',
+    padding:10,
+    borderWidth: 1, // épaisseur des bordures
+    borderBottomRightRadius: 20, // rayon des bordures
+    borderTopRightRadius: 20,
+    alignItems: 'center',
+  },
+  hiddenRightImage: {
+    flex: 1,
+    width: 50,
+    resizeMode: 'contain',
+  },
+  hiddenLeftImage: {
+    flex: 1,
+    width: 50,
+    resizeMode: 'contain',
+  },
 });
 
 export default HomeScreen;
