@@ -49,7 +49,11 @@ const HomeScreen = () => {
   // Fonction qui retourne les composants des items de la flatlist
   const Item = ({ title }) => (
     <View style={styles.item}>
+      <Pressable onPress={() => {
+        console.log("ok");
+}} style={styles.show_all_ref}>
       <Text style={styles.textItem}>{title}</Text>
+      </Pressable>
     </View>
   );
 
@@ -288,7 +292,11 @@ const styles = StyleSheet.create({
     right: 0,
     width: screenWidth,
     height: 400,  // Ajustez la hauteur selon vos besoins
-
+  },
+  show_all_ref: {
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    
   }
 
 });
