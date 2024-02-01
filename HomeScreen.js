@@ -25,13 +25,13 @@ const HomeScreen = () => {
 
   const [newPotentialSubject, onChangeText] = useState();
 
-  const [data_in_flatlist, setDataInFlatlist] = useState(DATA);
+  const [data_in_flatlist, setDataInSwipelist] = useState(DATA);
 
   useEffect(() => {
     const change_data = async () => {
       const fileM = new FM();
       const all_ref = await fileM.get_all_ref();
-      setDataInFlatlist(all_ref);
+      setDataInSwipelist(all_ref);
     }
 
     const check_file = async () => {
@@ -40,7 +40,7 @@ const HomeScreen = () => {
         change_data();
       } else {
         console.log("je laisse la variable par défaut");
-        setDataInFlatlist(DATA);
+        setDataInSwipelist(DATA);
       }
     }
 
@@ -72,7 +72,7 @@ const HomeScreen = () => {
 
     console.log("tous les réf sont ", new_data);
 
-    setDataInFlatlist(new_data);
+    setDataInSwipelist(new_data);
   };
 
   // Set fonts style
@@ -93,13 +93,6 @@ const HomeScreen = () => {
     return null;
   }
 
-  // Test
-
-  // const onRowDidOpen = (rowKey) => {
-  //   console.log('une ligne est ouverte');
-  // };
-
-
   const renderHiddenItem = (data, rowMap) => (
     <View style={styles.mainHiddenView}>
       <View style={styles.hiddenLeftView}  >
@@ -115,7 +108,14 @@ const HomeScreen = () => {
       </View>
       <View style={styles.hiddenRightView}>
         <Pressable
-        onPress={()=>{console.log("je dois supprimer",data.item.id);}}>
+        onPress={async ()=>{
+          const fileM = new FM();
+          const newData = await fileM.delete_theme(data.item.id);
+          setDataInSwipelist(newData);
+          if(newData.length == 0){
+            setDataInSwipelist(DATA);
+          }
+        }}>
         <Image
             source={require('./assets/poubelle.png')}
             style={styles.hiddenRightImage}
@@ -151,8 +151,6 @@ const HomeScreen = () => {
           rightOpenValue={-70}
           previewRowKey={'0'}
           previewOpenValue={-40}
-          previewOpenDelay={3000}
-          // onRowDidOpen={onRowDidOpen}
         />
       </SafeAreaView>
 
@@ -356,7 +354,7 @@ const styles = StyleSheet.create({
   hiddenLeftView: {
     backgroundColor: '#0a46a6',
     padding:10,
-    borderWidth: 1, // épaisseur des bordures
+    borderWidth: 3, // épaisseur des bordures
     borderBottomLeftRadius: 20, // rayon des bordures
     borderTopLeftRadius: 20,
     alignItems: 'center',
@@ -364,10 +362,11 @@ const styles = StyleSheet.create({
   hiddenRightView: {
     backgroundColor: '#750c2a',
     padding:10,
-    borderWidth: 1, // épaisseur des bordures
+    borderWidth: 3, // épaisseur des bordures
     borderBottomRightRadius: 20, // rayon des bordures
     borderTopRightRadius: 20,
     alignItems: 'center',
+
   },
   hiddenRightImage: {
     flex: 1,
