@@ -23,15 +23,24 @@ const HomeScreen = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
 
+  const [modalRename, setModalRename] = useState(false);
+
   const [newPotentialSubject, onChangeText] = useState();
 
   const [data_in_flatlist, setDataInSwipelist] = useState(DATA);
+
+  const [id_of_subject, setIdToChange] = useState('');
+
 
   useEffect(() => {
     const change_data = async () => {
       const fileM = new FM();
       const all_ref = await fileM.get_all_ref();
-      setDataInSwipelist(all_ref);
+      if (all_ref.length != 0) {
+        setDataInSwipelist(all_ref);
+      } else {
+        setDataInSwipelist(DATA);
+      }
     }
 
     const check_file = async () => {
@@ -70,7 +79,7 @@ const HomeScreen = () => {
 
     let new_data = await fileM.get_all_ref();
 
-    console.log("tous les réf sont ", new_data);
+    // console.log("tous les réf sont ", new_data);
 
     setDataInSwipelist(new_data);
   };
@@ -97,31 +106,36 @@ const HomeScreen = () => {
     <View style={styles.mainHiddenView}>
       <View style={styles.hiddenLeftView}  >
         <Pressable
-          onPress={()=>{console.log("je dois renommer",data.item.id);}}
+          onPress={() => {
+            console.log("je dois renommer", data.item.id);
+            setIdToChange(data.item.id);
+            setModalRename(true);
+          }
+          }
         >
           <Image
-              source={require('./assets/rename.png')}
-              style={styles.hiddenLeftImage}
-              resizeMode="cover"
-            />
+            source={require('./assets/rename.png')}
+            style={styles.hiddenLeftImage}
+            resizeMode="cover"
+          />
         </Pressable>
       </View>
       <View style={styles.hiddenRightView}>
         <Pressable
-        onPress={async ()=>{
-          const fileM = new FM();
-          const newData = await fileM.delete_theme(data.item.id);
-          setDataInSwipelist(newData);
-          if(newData.length == 0){
-            setDataInSwipelist(DATA);
-          }
-        }}>
-        <Image
+          onPress={async () => {
+            const fileM = new FM();
+            const newData = await fileM.delete_theme(data.item.id);
+            setDataInSwipelist(newData);
+            if (newData.length == 0) {
+              setDataInSwipelist(DATA);
+            }
+          }}>
+          <Image
             source={require('./assets/poubelle.png')}
             style={styles.hiddenRightImage}
             resizeMode="cover"
           />
-                  </Pressable>
+        </Pressable>
 
       </View>
     </View>
@@ -227,6 +241,61 @@ const HomeScreen = () => {
 
       </Modal>
 
+      <Modal
+        transparent={true} // Me permet de voir ce qu'il y a en dehors du modal
+        animationType='slide'
+        visible={modalRename}
+      >
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
+          <View style={styles.mainViewModalRename}>
+
+            <View style={{marginTop: 20}}>
+              <Text style={styles.textItem}>{id_of_subject}</Text>
+            </View>
+            <View style={{backgroundColor: 'gray', flex: 1, justifyContent: 'flex-start'}}>
+              <Image
+                source={require('./assets/fleche.png')}
+                style={[{ transform: [{ rotate: '90 deg' }, { scale: 0.1 }]}]}
+                resizeMode="cover"
+              />
+            </View>
+            <View>
+              <TextInput
+                style={{
+                  width: screenWidth - 100,
+                  borderWidth: 1,
+                  padding: 20,
+                  fontFamily: 'Minecraft',
+                  textAlign: 'center',
+                  backgroundColor: '#ffffff'
+                }}
+                onChangeText={onChangeText}
+                placeholder="Renommer le sujet"
+                placeholderTextColor="#94743d"
+              />
+            </View>
+
+            <View style={{ flexDirection: 'row' }} >
+              <Pressable
+                onPress={() => {
+                  console.log('je dois renommer');
+                }}>
+                <Text style={styles.buttonCloseModal} >Renommer ce sujet</Text>
+              </Pressable>
+
+              <Pressable
+                onPress={() => {
+                  console.log('je dois annuler');
+                }}>
+                <Text style={styles.buttonCloseModal2} >Annuler</Text>
+              </Pressable>
+
+            </View>
+
+          </View>
+        </TouchableWithoutFeedback>
+
+      </Modal>
 
     </View>
   );
@@ -353,7 +422,7 @@ const styles = StyleSheet.create({
   },
   hiddenLeftView: {
     backgroundColor: '#0a46a6',
-    padding:10,
+    padding: 10,
     borderWidth: 3, // épaisseur des bordures
     borderBottomLeftRadius: 20, // rayon des bordures
     borderTopLeftRadius: 20,
@@ -361,7 +430,7 @@ const styles = StyleSheet.create({
   },
   hiddenRightView: {
     backgroundColor: '#750c2a',
-    padding:10,
+    padding: 10,
     borderWidth: 3, // épaisseur des bordures
     borderBottomRightRadius: 20, // rayon des bordures
     borderTopRightRadius: 20,
@@ -377,6 +446,16 @@ const styles = StyleSheet.create({
     flex: 1,
     width: 50,
     resizeMode: 'contain',
+  },
+
+  mainViewModalRename: {
+    position: 'absolute',
+    width: screenWidth,
+    bottom: 0,
+    backgroundColor: 'white',
+    height: 300,
+    alignItems: 'center',
+    flex: 1,
   },
 });
 
