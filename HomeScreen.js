@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, StatusBar, Text, FlatList, SafeAreaView, Dimensions, Modal, Pressable, TextInput, TouchableWithoutFeedback, Keyboard, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, StatusBar, Text, FlatList, SafeAreaView, Dimensions, Modal, Pressable, TextInput, TouchableWithoutFeedback, Keyboard, Image, TouchableOpacity, Alert } from 'react-native';
 import { FloatingAction } from 'react-native-floating-action';
 import { useFonts } from 'expo-font';
 import * as FileSystem from 'expo-file-system';
@@ -26,6 +26,8 @@ const HomeScreen = () => {
   const [modalRename, setModalRename] = useState(false);
 
   const [newPotentialSubject, onChangeText] = useState();
+
+  const [keyRenamed, onChangeName] = useState();
 
   const [data_in_flatlist, setDataInSwipelist] = useState(DATA);
 
@@ -107,9 +109,13 @@ const HomeScreen = () => {
       <View style={styles.hiddenLeftView}  >
         <Pressable
           onPress={() => {
-            console.log("je dois renommer", data.item.id);
-            setIdToChange(data.item.id);
-            setModalRename(true);
+            // console.log("je dois renommer", data.item.id);
+            if(data.item.id == 'Aucun'){
+              Alert.alert('Vous ne pouvez pas renommer ceci !')
+            }else{
+              setIdToChange(data.item.id);
+              setModalRename(!modalRename);
+            }
           }
           }
         >
@@ -252,7 +258,7 @@ const HomeScreen = () => {
             <View style={{marginTop: 20}}>
               <Text style={styles.textItem}>{id_of_subject}</Text>
             </View>
-            <View style={{backgroundColor: 'gray', flex: 1, justifyContent: 'flex-start'}}>
+            <View style={{flex : 0.4,justifyContent: "center", alignItems: "center", }}>
               <Image
                 source={require('./assets/fleche.png')}
                 style={[{ transform: [{ rotate: '90 deg' }, { scale: 0.1 }]}]}
@@ -269,7 +275,7 @@ const HomeScreen = () => {
                   textAlign: 'center',
                   backgroundColor: '#ffffff'
                 }}
-                onChangeText={onChangeText}
+                onChangeText={onChangeName}
                 placeholder="Renommer le sujet"
                 placeholderTextColor="#94743d"
               />
@@ -277,15 +283,24 @@ const HomeScreen = () => {
 
             <View style={{ flexDirection: 'row' }} >
               <Pressable
-                onPress={() => {
-                  console.log('je dois renommer');
+                onPress={async () => {
+                  if(keyRenamed.length != 0){
+                    const fileM = new FM();
+                    const new_data = await fileM.rename_theme(id_of_subject, keyRenamed);
+                    setDataInSwipelist(new_data);
+                    setModalRename(!modalRename);  
+                    onChangeName(''); // Et je remet à zéro ceci                  
+                  }else{
+                    Alert.alert('Tu as oublié quelque chose je pense ?!')
+                  }
                 }}>
                 <Text style={styles.buttonCloseModal} >Renommer ce sujet</Text>
               </Pressable>
 
               <Pressable
                 onPress={() => {
-                  console.log('je dois annuler');
+                  setModalRename(!modalRename);
+                  console.log('Rien a été renommée');
                 }}>
                 <Text style={styles.buttonCloseModal2} >Annuler</Text>
               </Pressable>
