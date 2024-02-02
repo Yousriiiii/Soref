@@ -110,9 +110,9 @@ const HomeScreen = () => {
         <Pressable
           onPress={() => {
             // console.log("je dois renommer", data.item.id);
-            if(data.item.id == 'Aucun'){
+            if (data.item.id == 'Aucun') {
               Alert.alert('Vous ne pouvez pas renommer ceci !')
-            }else{
+            } else {
               setIdToChange(data.item.id);
               setModalRename(!modalRename);
             }
@@ -187,6 +187,8 @@ const HomeScreen = () => {
         animated={false}
         color="#a8c66c"
         overrideWithAction
+        iconWidth={40}
+        iconHeight={40}
       />
 
 
@@ -255,13 +257,13 @@ const HomeScreen = () => {
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
           <View style={styles.mainViewModalRename}>
 
-            <View style={{marginTop: 20}}>
+            <View style={{ marginTop: 20 }}>
               <Text style={styles.textItem}>{id_of_subject}</Text>
             </View>
-            <View style={{flex : 0.4,justifyContent: "center", alignItems: "center", }}>
+            <View style={{ flex: 0.4, justifyContent: "center", alignItems: "center", }}>
               <Image
                 source={require('./assets/fleche.png')}
-                style={[{ transform: [{ rotate: '90 deg' }, { scale: 0.1 }]}]}
+                style={[{ transform: [{ rotate: '90 deg' }, { scale: 0.1 }] }]}
                 resizeMode="cover"
               />
             </View>
@@ -284,13 +286,13 @@ const HomeScreen = () => {
             <View style={{ flexDirection: 'row' }} >
               <Pressable
                 onPress={async () => {
-                  if(keyRenamed.length != 0){
+                  if (keyRenamed.length != 0) {
                     const fileM = new FM();
                     const new_data = await fileM.rename_theme(id_of_subject, keyRenamed);
                     setDataInSwipelist(new_data);
-                    setModalRename(!modalRename);  
+                    setModalRename(!modalRename);
                     onChangeName(''); // Et je remet à zéro ceci                  
-                  }else{
+                  } else {
                     Alert.alert('Tu as oublié quelque chose je pense ?!')
                   }
                 }}>
