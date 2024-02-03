@@ -288,7 +288,6 @@ const HomeScreen = () => {
                   onPress={async () => {
                     if (keyRenamed.length != 0) {
                       const fileM = new FM();
-                      console.log('ooooooookkkkkkkkkkkkkkkk');
                       const new_data = await fileM.rename_theme(id_of_subject, keyRenamed);
                       setDataInSwipelist(new_data);
                       setModalRename(!modalRename);
