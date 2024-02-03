@@ -1,4 +1,5 @@
 import * as FileSystem from 'expo-file-system';
+import { Alert } from 'react-native';
 
 class FM {
   static JSONpath = FileSystem.documentDirectory + 'data.json'; // Chemin vers le fichier JSON
@@ -38,6 +39,7 @@ class FM {
         console.log("la nouvelle valeur est ajouté");
       } else {
         console.log("il y a déjà une clé");
+        Alert.alert('Ce sujet existe déjà')
       }
       this.rewrite_data(currentData);
     }
@@ -118,15 +120,25 @@ class FM {
     let data_to_return = [];
     let data_for_rewritten = {};
 
+    console.log('ooooooookkkkkkkkkkkkkkkk');
+
     try {
       const fileContent = await FileSystem.readAsStringAsync(FM.JSONpath);
       const parsedData = JSON.parse(fileContent);
 
       for (const [key, value] of Object.entries(parsedData)) {
         if (key_to_rename == key) { // Je chnage donc la clé
-          data_to_return.push({ id: name_of_new_key, title: name_of_new_key });
-          data_for_rewritten[name_of_new_key] = value; // C'est dommage que je réecrit tous ;(
+          console.log('enrvant 2');
+          if(data_for_rewritten.hasOwnProperty(key_to_rename)){
+            console.log('enrvant 3');
+            data_to_return.push({ id: name_of_new_key, title: name_of_new_key });
+            data_for_rewritten[name_of_new_key] = value; // C'est dommage que je réecrit tous ;(
+            }else{
+              console.log('enrvant 4');
+              Alert.alert('Ce sujet existe déjà');
+            }
         } else {
+          console.log('enrvant');
           data_to_return.push({ id: key, title: key });
           data_for_rewritten[key] = value; // C'est dommage que je réecrit tous ;(
         }

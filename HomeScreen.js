@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, StatusBar, Text, FlatList, SafeAreaView, Dimensions, Modal, Pressable, TextInput, TouchableWithoutFeedback, Keyboard, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, StyleSheet, StatusBar, Text, SafeAreaView, Dimensions, Modal, Pressable, TextInput, TouchableWithoutFeedback, Keyboard, Image, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { FloatingAction } from 'react-native-floating-action';
 import { useFonts } from 'expo-font';
 import * as FileSystem from 'expo-file-system';
@@ -69,10 +69,6 @@ const HomeScreen = () => {
       </Pressable>
     </View>
   );
-
-  const dismissKeyboard = () => {
-    Keyboard.dismiss(); // Je quitte le clavier
-  };
 
   const add_new_ref = async () => {
     let fileM = new FM();
@@ -158,11 +154,6 @@ const HomeScreen = () => {
       <StatusBar barStyle="dark-content" />
 
       <SafeAreaView style={styles.ListContainer}>
-        {/* <FlatList
-          data={data_in_flatlist}
-          renderItem={({ item }) => <Item title={item.title} />}
-          keyExtractor={item => item.id}
-        /> */}
         <SwipeListView
           data={data_in_flatlist}
           renderItem={({ item }) => <Item title={item.title} />}
@@ -196,7 +187,7 @@ const HomeScreen = () => {
         animationType="slide"
         visible={modalVisible}
       >
-        <TouchableWithoutFeedback onPress={dismissKeyboard}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.continerInModal}>
             <Image
               source={require('./assets/topIMG.png')}
@@ -254,62 +245,74 @@ const HomeScreen = () => {
         animationType='slide'
         visible={modalRename}
       >
-        <TouchableWithoutFeedback onPress={dismissKeyboard}>
-          <View style={styles.mainViewModalRename}>
 
-            <View style={{ marginTop: 20 }}>
-              <Text style={styles.textItem}>{id_of_subject}</Text>
-            </View>
-            <View style={{ flex: 0.4, justifyContent: "center", alignItems: "center", }}>
-              <Image
-                source={require('./assets/fleche.png')}
-                style={[{ transform: [{ rotate: '90 deg' }, { scale: 0.1 }] }]}
-                resizeMode="cover"
-              />
-            </View>
-            <View>
-              <TextInput
-                style={{
-                  width: screenWidth - 100,
-                  borderWidth: 1,
-                  padding: 20,
-                  fontFamily: 'Minecraft',
-                  textAlign: 'center',
-                  backgroundColor: '#ffffff'
-                }}
-                onChangeText={onChangeName}
-                placeholder="Renommer le sujet"
-                placeholderTextColor="#94743d"
-              />
-            </View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
 
-            <View style={{ flexDirection: 'row' }} >
-              <Pressable
-                onPress={async () => {
-                  if (keyRenamed.length != 0) {
-                    const fileM = new FM();
-                    const new_data = await fileM.rename_theme(id_of_subject, keyRenamed);
-                    setDataInSwipelist(new_data);
+          <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+            <View style={styles.mainViewModalRename}>
+
+
+              <View style={{ marginTop: 50 }}>
+                <Text style={styles.textItem}>{id_of_subject}</Text>
+              </View>
+              <View style={{ flex: 0.4, justifyContent: "center", alignItems: "center", marginBottom: 10 }}>
+                <Image
+                  source={require('./assets/fleche.png')}
+                  style={[{ transform: [{ rotate: '90 deg' }, { scale: 0.1 }] }]}
+                  resizeMode="cover"
+                />
+              </View>
+              <View>
+
+                <TextInput
+                  style={{
+                    width: screenWidth - 100,
+                    borderWidth: 1,
+                    padding: 20,
+                    fontFamily: 'Minecraft',
+                    textAlign: 'center',
+                    backgroundColor: '#ffffff'
+                  }}
+                  onChangeText={onChangeName}
+                  placeholder="Renommer le sujet"
+                  placeholderTextColor="#94743d"
+                />
+
+
+
+
+              </View>
+
+              <View style={{ flexDirection: 'row' }} >
+                <Pressable
+                  onPress={async () => {
+                    if (keyRenamed.length != 0) {
+                      const fileM = new FM();
+                      console.log('ooooooookkkkkkkkkkkkkkkk');
+                      const new_data = await fileM.rename_theme(id_of_subject, keyRenamed);
+                      setDataInSwipelist(new_data);
+                      setModalRename(!modalRename);
+                      onChangeName(''); // Et je remet à zéro ceci                  
+                    } else {
+                      Alert.alert('Tu as oublié quelque chose je pense ?!')
+                    }
+                  }}>
+                  <Text style={styles.buttonCloseModal} >Renommer ce sujet</Text>
+                </Pressable>
+
+                <Pressable
+                  onPress={() => {
                     setModalRename(!modalRename);
-                    onChangeName(''); // Et je remet à zéro ceci                  
-                  } else {
-                    Alert.alert('Tu as oublié quelque chose je pense ?!')
-                  }
-                }}>
-                <Text style={styles.buttonCloseModal} >Renommer ce sujet</Text>
-              </Pressable>
+                    console.log('Rien a été renommée');
+                  }}>
+                  <Text style={styles.buttonCloseModal2} >Annuler</Text>
+                </Pressable>
 
-              <Pressable
-                onPress={() => {
-                  setModalRename(!modalRename);
-                  console.log('Rien a été renommée');
-                }}>
-                <Text style={styles.buttonCloseModal2} >Annuler</Text>
-              </Pressable>
-
+              </View>
             </View>
 
           </View>
+
         </TouchableWithoutFeedback>
 
       </Modal>
@@ -375,13 +378,13 @@ const styles = StyleSheet.create({
     width: screenWidth - 60,
     borderWidth: 1,
     padding: 20,
-    marginTop: 40,
+    marginTop: 30,
     fontFamily: 'Minecraft',
     textAlign: 'center',
     backgroundColor: '#ffffff'
   },
   buttonCloseModal: {
-    top: 30,
+    top: 20,
     fontFamily: 'Minecraft',
     fontSize: 20,
     textDecorationStyle: 'dashed',
@@ -392,7 +395,7 @@ const styles = StyleSheet.create({
     padding: 3,
   },
   buttonCloseModal2: {
-    top: 30,
+    top: 20,
     fontFamily: 'Minecraft',
     fontSize: 20,
     textDecorationStyle: 'dashed',
@@ -468,7 +471,7 @@ const styles = StyleSheet.create({
   mainViewModalRename: {
     position: 'absolute',
     width: screenWidth,
-    bottom: 0,
+    top: 0,
     backgroundColor: 'white',
     height: 300,
     alignItems: 'center',

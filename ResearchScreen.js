@@ -1,45 +1,69 @@
 import React from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, TextInput, TouchableWithoutFeedback, Keyboard, Dimensions } from 'react-native';
 import { FloatingAction } from 'react-native-floating-action';
+import { useFonts } from 'expo-font';
+
+const screenWidth = Dimensions.get('window').width; // Largeur de l'écran
+
 
 const ResearchScreen = () => {
-  const actions = [
-    {
-      icon: require('./assets/plus.png'),
-      name: 'new_subject',
-      position: 2,
-    },
-    // Ajoutez d'autres actions si nécessaire
-  ];
+
+    // Set fonts style
+    const [fontsLoaded] = useFonts({
+      Minecraft: require('./assets/fonts/minecraft_font.ttf'),
+    });
+
+    // Je n'affiche rien si la police n'a pas été chargé
+    if (!fontsLoaded) {
+      return null;
+    }
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss(); // Je quitte le clavier
+  };
 
   return (
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+
     <View style={styles.container}>
-      {/* Votre contenu principal ici */}
-      
-      {/* Bouton flottant en bas à droite */}
-      <FloatingAction
-        actions={actions}
-        onPressItem={(name) => {
-          if (name === 'new_subject') {
-            // Gérez l'événement du bouton ici
-            console.log('Bouton Nouveau appuyé');
-          }
-        }}
-        position="right"
-        animated={false}
-        color='#C08926'
-        overrideWithAction
-      />
+
+      <View style={styles.firstContainer}>
+        <TextInput
+          placeholder='Rechercher'
+          style= {styles.textInput}
+        />
+      </View>
+
     </View>
+
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // Assurez-vous que le contenu principal prend toute la hauteur de l'écran
-    // (par exemple, en utilisant justifyContent: 'flex-end' si nécessaire)
+
+    backgroundColor : 'gray'
   },
+  firstContainer: {
+    backgroundColor : 'yellow',
+    flexDirection: 'row',
+    alignItems : 'center',
+    flex: 0.2,
+    justifyContent: 'center' // Centrer le text input
+  },
+
+  textInput : {
+    width: screenWidth - 60,
+    borderRadius: 50,
+    borderWidth: 1,
+    padding: 15,
+    fontFamily: 'Minecraft',
+    textAlign: 'center',
+    backgroundColor: '#ffffff'
+  }
+
 });
 
 export default ResearchScreen;
