@@ -17,7 +17,7 @@ let DATA = [
 ];
 
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
 
   const [titleText, setTitleText] = useState('Mes sujets');
 
@@ -63,7 +63,8 @@ const HomeScreen = () => {
   const Item = ({ title }) => (
     <View style={styles.item}>
       <Pressable onPress={() => {
-        console.log("ok");
+        console.log("ok, je dois montrer toutes les ref de ce sujet");
+        navigation.navigate('ShowRef', {subject: title});
       }} style={styles.show_all_ref}>
         <Text style={styles.textItem}>{title}</Text>
       </Pressable>
@@ -339,7 +340,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontFamily: 'Minecraft',
     letterSpacing: 1, // espace entre les lettre
-    marginTop: 20,
+    marginTop: 10,
   },
   ListContainer: {
     flex: 1,
