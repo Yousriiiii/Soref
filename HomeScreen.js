@@ -63,7 +63,6 @@ const HomeScreen = ({navigation}) => {
   const Item = ({ title }) => (
     <View style={styles.item}>
       <Pressable onPress={() => {
-        console.log("ok, je dois montrer toutes les ref de ce sujet");
         navigation.navigate('ShowRef', {subject: title});
       }} style={styles.show_all_ref}>
         <Text style={styles.textItem}>{title}</Text>

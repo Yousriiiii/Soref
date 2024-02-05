@@ -6,7 +6,10 @@ import { useFonts } from 'expo-font';
 const screenWidth = Dimensions.get('window').width; // Largeur de l'écran
 
 
-const ShowRef = () => {
+const ShowRef = ({navigation, route}) => {
+
+
+  console.log(route.params.subject);
 
     // Set fonts style
     const [fontsLoaded] = useFonts({
