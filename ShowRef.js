@@ -1,25 +1,25 @@
 import React from 'react';
-import { View, StyleSheet, TextInput, TouchableWithoutFeedback, Keyboard, Dimensions } from 'react-native';
+import { View, StyleSheet, TextInput, TouchableWithoutFeedback, Keyboard, Dimensions, Text, Image, Pressable } from 'react-native';
 import { FloatingAction } from 'react-native-floating-action';
 import { useFonts } from 'expo-font';
 
 const screenWidth = Dimensions.get('window').width; // Largeur de l'écran
 
 
-const ShowRef = ({navigation, route}) => {
+const ShowRef = ({ navigation, route }) => {
 
 
-  console.log(route.params.subject);
+  // console.log(route.params.subject);
 
-    // Set fonts style
-    const [fontsLoaded] = useFonts({
-      Minecraft: require('./assets/fonts/minecraft_font.ttf'),
-    });
+  // Set fonts style
+  const [fontsLoaded] = useFonts({
+    Minecraft: require('./assets/fonts/minecraft_font.ttf'),
+  });
 
-    // Je n'affiche rien si la police n'a pas été chargé
-    if (!fontsLoaded) {
-      return null;
-    }
+  // Je n'affiche rien si la police n'a pas été chargé
+  if (!fontsLoaded) {
+    return null;
+  }
 
   const dismissKeyboard = () => {
     Keyboard.dismiss(); // Je quitte le clavier
@@ -28,44 +28,58 @@ const ShowRef = ({navigation, route}) => {
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
 
-    <View style={styles.container}>
+      <View style={styles.MainContainer}>
 
-      <View style={styles.firstContainer}>
-        <TextInput
-          placeholder='Rechercher'
-          style= {styles.textInput}
-        />
+        <View style={styles.titleContainer}>
+          <View style={styles.containerArrow}>
+            <Pressable onPress={() => {
+              navigation.navigate("BottomBar")
+            }}>
+              <Image
+                source={require('./assets/fleche_retour.png')}
+                resizeMode="cover"
+                style={[{ transform: [{ scale: -1 }] }, {
+                  resizeMode: 'contain', height: 40, width: 60
+                }]}
+              />
+            </Pressable>
+          </View>
+
+          <View style={{
+            flex: 1, justifyContent: 'center', alignItems: 'center',
+          }}>
+            <Text style={{
+              fontSize: 30,
+              fontFamily: 'Minecraft',
+              letterSpacing: 1, // espace entre les lettre
+              marginTop: 10,
+            }}>Ma bibliographie</Text>
+          </View>
+
+        </View>
+
+        <View style={{borderBottomWidth: 1, borderBottomColor: 'black'}}></View>
+
+
+
       </View>
-
-    </View>
 
     </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  MainContainer: {
     flex: 1,
-
-    backgroundColor : 'gray'
   },
-  firstContainer: {
-    backgroundColor : 'yellow',
+  titleContainer: {
     flexDirection: 'row',
-    alignItems : 'center',
     flex: 0.2,
-    justifyContent: 'center' // Centrer le text input
   },
-
-  textInput : {
-    width: screenWidth - 60,
-    borderRadius: 50,
-    borderWidth: 1,
-    padding: 15,
-    fontFamily: 'Minecraft',
-    textAlign: 'center',
-    backgroundColor: '#ffffff'
-  }
+  containerArrow: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
 
 });
 
