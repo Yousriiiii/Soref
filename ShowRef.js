@@ -7,15 +7,23 @@ const screenWidth = Dimensions.get('window').width; // Largeur de l'écran
 
 let DATA = [
   {
-    id: 'Aucun',
-    title: 'Aucun',
+    id: 'Auc',
+    title: 'Auc',
   },
 ];
+
+let testData = []
 
 const ShowRef = ({ navigation, route }) => {
 
   const [data_in_flatlist, setDataInSwipelist] = useState(DATA);
 
+  const [TitleTextWidth, setTextWidth] = useState(0);
+
+  const handleTextLayout = (event) => {
+    const { width } = event.nativeEvent.layout;
+    setTextWidth(width);
+  };
 
   // console.log(route.params.subject);
 
@@ -46,12 +54,27 @@ const ShowRef = ({ navigation, route }) => {
       {title === 'Aucun' ? (
       <Text style={styles.textItem}>{title}</Text>
     ) : (
+      <View>
+      <View style= {{borderBottomWidth: 1, borderBottomColor: 'black', paddingBottom: 8}}>
         <Text style={styles.textItem}>Bon y a quelque chose</Text>
+      </View>
+      
+      <View style= {{borderBottomWidth: 1, borderBottomColor: 'black', paddingBottom: 8, paddingTop: 8}}>
+        <Text>VERSET :</Text>
+      </View>
+
+      <View style= {{borderBottomWidth: 1, borderBottomColor: 'black', paddingBottom: 8, paddingTop: 8}}>
+        <Text>COMMENTAIRE</Text>
+      </View>
+
+      <View style= {{ paddingTop: 8}}>
+        <Text>IMAGE</Text>
+      </View>
+
+      </View>
     )}
     </View>
   );
-
-
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
 
@@ -73,14 +96,19 @@ const ShowRef = ({ navigation, route }) => {
           </View>
 
           <View style={{
-            flex: 1, justifyContent: 'center', alignItems: 'center',
+            flex: 1, justifyContent: 'center'
           }}>
-            <Text style={{
+            <Text
+            onLayout={handleTextLayout}
+            style={{
+              position: 'absolute',
+              right: screenWidth/2 - TitleTextWidth/2,
               fontSize: 30,
               fontFamily: 'Minecraft',
               letterSpacing: 1, // espace entre les lettre
               marginTop: 10,
-            }}>Ma bibliographie</Text>
+            
+            }}>{route.params.subject}</Text>
           </View>
 
         </View>
@@ -126,7 +154,8 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     flexDirection: 'row',
-    flex: 0.2,
+    flex: 0.1,
+    marginTop: 40,
   },
   containerArrow: {
     justifyContent: 'center',

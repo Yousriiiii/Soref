@@ -120,8 +120,6 @@ class FM {
     let data_to_return = [];
     let data_for_rewritten = {};
 
-    console.log('ooooooookkkkkkkkkkkkkkkk');
-
     try {
       const fileContent = await FileSystem.readAsStringAsync(FM.JSONpath);
       const parsedData = JSON.parse(fileContent);
@@ -152,8 +150,6 @@ class FM {
 
 
   }
-
-
 
 }
 
